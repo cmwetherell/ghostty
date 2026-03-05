@@ -221,6 +221,14 @@ extension Ghostty {
                     SurfaceErrorView()
                 }
 
+                // If we're in a split and this pane is focused, draw a border to make
+                // it clear which pane is active.
+                if isSplit && surfaceFocus {
+                    Rectangle()
+                        .strokeBorder(ghostty.config.splitDividerColor, lineWidth: 1)
+                        .allowsHitTesting(false)
+                }
+
                 // If we're part of a split view and don't have focus, we put a semi-transparent
                 // rectangle above our view to make it look unfocused. We include the last
                 // focused surface so this still works while SwiftUI focus is temporarily nil.

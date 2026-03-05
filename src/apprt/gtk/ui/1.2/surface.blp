@@ -219,6 +219,22 @@ Overlay terminal_page {
     }
   }
 
+  [overlay]
+  // Draw a border around the focused pane when splits are active
+  Revealer {
+    reveal-child: bind $should_focused_split_be_shown(template.focused, template.is-split) as <bool>;
+    transition-duration: 0;
+    can-focus: false;
+    can-target: false;
+    focusable: false;
+
+    DrawingArea {
+      styles [
+        "focused-split",
+      ]
+    }
+  }
+
   DropTarget drop_target {
     drop => $drop();
     actions: copy;

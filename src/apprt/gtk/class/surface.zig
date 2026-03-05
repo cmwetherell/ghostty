@@ -829,6 +829,15 @@ pub const Surface = extern struct {
         return @intFromBool(focused == 0 and is_split != 0);
     }
 
+    /// Callback used to determine whether the focused-split border should be shown
+    fn closureShouldFocusedSplitBeShown(
+        _: *Self,
+        focused: c_int,
+        is_split: c_int,
+    ) callconv(.c) c_int {
+        return @intFromBool(focused != 0 and is_split != 0);
+    }
+
     pub fn toggleFullscreen(self: *Self) void {
         signals.@"toggle-fullscreen".impl.emit(
             self,
@@ -3606,6 +3615,7 @@ pub const Surface = extern struct {
             class.bindTemplateCallback("notify_vadjustment", &propVAdjustment);
             class.bindTemplateCallback("should_border_be_shown", &closureShouldBorderBeShown);
             class.bindTemplateCallback("should_unfocused_split_be_shown", &closureShouldUnfocusedSplitBeShown);
+            class.bindTemplateCallback("should_focused_split_be_shown", &closureShouldFocusedSplitBeShown);
             class.bindTemplateCallback("search_stop", &searchStop);
             class.bindTemplateCallback("search_changed", &searchChanged);
             class.bindTemplateCallback("search_next_match", &searchNextMatch);

@@ -892,6 +892,40 @@ pub const Application = extern struct {
             });
         }
 
+        // Focused split border: use split-divider-color if set, otherwise
+        // darken the background color to produce a visible border.
+        const focused_border: CoreConfig.Color = config.@"split-divider-color" orelse blk: {
+            const bg = config.background;
+            // Simple luminance check to decide direction
+            const lum = @as(u16, bg.r) * 299 + @as(u16, bg.g) * 587 + @as(u16, bg.b) * 114;
+            if (lum > 128_000) {
+                // Light background: darken
+                break :blk .{
+                    .r = bg.r -| 40,
+                    .g = bg.g -| 40,
+                    .b = bg.b -| 40,
+                };
+            } else {
+                // Dark background: lighten
+                break :blk .{
+                    .r = bg.r +| 60,
+                    .g = bg.g +| 60,
+                    .b = bg.b +| 60,
+                };
+            }
+        };
+
+        try writer.print(
+            \\widget.focused-split {{
+            \\ border: 1px solid rgb({[r]d},{[g]d},{[b]d});
+            \\}}
+            \\
+        , .{
+            .r = focused_border.r,
+            .g = focused_border.g,
+            .b = focused_border.b,
+        });
+
         if (config.@"window-title-font-family") |font_family| {
             try writer.print(
                 \\.window headerbar {{
